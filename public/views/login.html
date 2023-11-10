@@ -13,9 +13,11 @@
     </h2>
     <div class="container" id="container">
       <div class="form-container sign-up-container">
-        <form action="/user/signUp" method="post">
+        <form onsubmit="submitForm(event)" method="post">
           <h1>Create Account</h1>
           <span>fill your credentials here</span>
+          <span id="unsuccessfull" style="color: red; font-weight: bold"></span>
+          <span id="success" style="color: green; font-weight: bold"></span>
           <input
             type="text"
             placeholder="Name"
@@ -37,13 +39,21 @@
             name="password"
             required
           />
-          <button id="signUpBtn">Sign Up</button>
+          <button id="signUpBtn" type="submit">Sign Up</button>
         </form>
       </div>
       <div class="form-container sign-in-container">
-        <form onsubmit="return false;">
+        <form onsubmit="loginForm(event)">
           <h1>Login</h1>
           <span>use your previous credentials</span>
+          <span
+            id="loginunSuccessfull"
+            style="color: red; font-weight: bold"
+          ></span>
+          <span
+            id="loginSuccess"
+            style="color: green; font-weight: bold"
+          ></span>
           <input
             type="email"
             placeholder="Email"
@@ -59,7 +69,7 @@
             required
           />
           <a href="/password/forgotPasswordPage">Forgot your password?</a>
-          <button id="loginBtn">Login</button>
+          <button type="submit" id="loginBtn">Login</button>
         </form>
       </div>
       <div class="overlay-container">
@@ -87,4 +97,5 @@
     referrerpolicy="no-referrer"
   ></script>
   <script src="../js/login.js"></script>
+  <script src="../js/signUp.js"></script>
 </html>
