@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const userRouter = require("./routes/userRouter");
 const sequelize = require("./util/database");
+const expenseRouter = require("./routes/expenseRouter");
 
 const cors = require("cors");
 const app = express();
@@ -11,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/", userRouter);
 app.use("/user", userRouter);
+app.use("/expense", expenseRouter);
 sequelize
   .sync()
   .then(() => {
