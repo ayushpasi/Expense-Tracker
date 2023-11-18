@@ -12,10 +12,10 @@ signIn.addEventListener("click", () => {
   container.classList.remove("right-panel-active");
 });
 
-async function loginForm(event) {
+async function loginForm(e) {
   event.preventDefault(); // Prevent the default form submission behavior
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = e.target.loginEmail.value;
+  const password = e.target.loginPassword.value;
 
   try {
     const response = await axios.post("/user/login", {
@@ -25,6 +25,9 @@ async function loginForm(event) {
 
     if (response.status === 200) {
       alert("login sucsses full");
+      localStorage.setItem("token", response.data.token);
+
+      window.location.href = "../views/homePage.html";
     }
   } catch (error) {
     console.log(error.response.status);

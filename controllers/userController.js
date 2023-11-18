@@ -1,6 +1,7 @@
 const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 const getLoginPage = async (req, res, next) => {
   try {
@@ -41,6 +42,10 @@ const postUserSignUp = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+const generateAccessToken = (id, name) => {
+  return jwt.sign({ userId: id, name: name }, "v%#JK2$5dfP!9sL@3gH*ZaE");
+};
 const postUserLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -52,7 +57,12 @@ const postUserLogin = async (req, res) => {
           res.status(500).json({ error: "somthing went wrong" });
         }
         if (result == true) {
-          res.status(200).send(`alert("login succesfully")`);
+          res
+            .status(200)
+            .json({
+              message: "user logged in succesfully",
+              token: generateAccessToken(existingUser.id, existingUser.name),
+            });
         } else {
           res.status(401).json({ error: "User not authorized" });
         }

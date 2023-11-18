@@ -2,6 +2,7 @@ const { where } = require("sequelize");
 const ExpenseModel = require("../models/expenseModel");
 
 //save data to database
+
 const addExpense = async (req, res, next) => {
   try {
     const expenseAmount = req.body.expenseAmount;
@@ -12,21 +13,24 @@ const addExpense = async (req, res, next) => {
       expenseAmount: expenseAmount,
       expenseDescription: expenseDescription,
       expenseCategory: expenseCategory,
+      userId: req.user.id,
     });
 
-    res.status(201).json({
-      newExpense: data,
-    });
+    res.status(201).json({ expense: data });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Failed to create a new expense" });
+    res.status(500).json({
+      error: "Failed to create a new expense",
+      message: error.message,
+    });
   }
 };
-
-//fetch all users
+//fetch all expenses
 const getAllExpenses = async (req, res, next) => {
   try {
-    const expenses = await ExpenseModel.findAll();
+    const expenses = await ExpenseModel.findAll({
+      where: { userId: req.user.id },
+    });
     res.status(200).json(expenses);
   } catch (err) {
     console.log(err);
@@ -39,10 +43,12 @@ const getAllExpenses = async (req, res, next) => {
 //delete user
 const deleteExpense = async (req, res, next) => {
   try {
-    const userId = req.params.id; // Use 'const' to declare userId
+    const userId = req.params.id;
+    console.log("hello");
+    console.log(userId);
     if (!userId) {
       return res.status(400).json({
-        error: "Id missing", // Changed 'err' to 'error'
+        error: "Id missing",
       });
     }
 
@@ -54,7 +60,7 @@ const deleteExpense = async (req, res, next) => {
 
     if (result === 1) {
       return res.status(200).json({
-        success: "User deleted successfully", // Changed 'succes' to 'success'
+        success: "User deleted successfully",
       });
     } else {
       return res.status(404).json({

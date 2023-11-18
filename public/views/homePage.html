@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta tags, title, and styles -->
+  </head>
+  <body>
+    <form id="my-form" onsubmit="addNewExpense(event)" method="post">
+      <!-- Expense Amount -->
+      <div class="mb-3">
+        <label for="expenseAmount" class="form-label">Expense Amount</label>
+        <input
+          type="number"
+          class="form-control"
+          id="expenseAmount"
+          name="expenseAmount"
+          required
+        />
+      </div>
+
+      <!-- Expense Description -->
+      <div class="mb-3">
+        <label for="expenseDescription" class="form-label">Description</label>
+        <input
+          type="text"
+          class="form-control"
+          id="expenseDescription"
+          name="expenseDescription"
+          required
+        />
+      </div>
+
+      <!-- Expense Category -->
+      <div class="mb-3">
+        <label for="expenseCategory" class="form-label">Category</label>
+        <select
+          class="form-select"
+          id="expenseCategory"
+          name="expenseCategory"
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="food">Food</option>
+          <option value="transportation">Transportation</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="utilities">Utilities</option>
+          <!-- Add more options as needed -->
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Add Expense</button>
+      </div>
+    </form>
+
+    <table border="1px" id="expenseTable">
+      <!-- Table headers -->
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Category</th>
+
+          <th colspan="2">Action</th>
+        </tr>
+      </thead>
+      <!-- Table body -->
+      <tbody id="expenseTableBody"></tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/homePage.js"></script>
+  </body>
+</html>
