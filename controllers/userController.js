@@ -57,12 +57,10 @@ const postUserLogin = async (req, res) => {
           res.status(500).json({ error: "somthing went wrong" });
         }
         if (result == true) {
-          res
-            .status(200)
-            .json({
-              message: "user logged in succesfully",
-              token: generateAccessToken(existingUser.id, existingUser.name),
-            });
+          res.status(200).json({
+            message: "user logged in succesfully",
+            token: generateAccessToken(existingUser.id, existingUser.name),
+          });
         } else {
           res.status(401).json({ error: "User not authorized" });
         }
@@ -74,4 +72,9 @@ const postUserLogin = async (req, res) => {
     console.log(err);
   }
 };
-module.exports = { postUserSignUp, getLoginPage, postUserLogin };
+module.exports = {
+  postUserSignUp,
+  getLoginPage,
+  postUserLogin,
+  generateAccessToken,
+};

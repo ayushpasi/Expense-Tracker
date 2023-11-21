@@ -11,7 +11,7 @@ const authenticate = async (req, res, next) => {
   try {
     const user = jwt.verify(token, "v%#JK2$5dfP!9sL@3gH*ZaE");
     const userData = await userModel.findByPk(user.userId);
-    // console.log("user id>>" + userData.id);
+    console.log("userData" + userData);
     req.user = userData;
     next();
   } catch (err) {

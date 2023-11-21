@@ -7,8 +7,13 @@ const expenseRouter = require("./routes/expenseRouter");
 
 const Expense = require("./models/expenseModel");
 const User = require("./models/userModel");
+const Order = require("./models/ordersModel");
 
 const userauthentication = require("./middleware/authentication");
+const purchaseMembershipRouter = require("./routes/purchaseMembershipRouter");
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const cors = require("cors");
 const app = express();
@@ -19,9 +24,13 @@ app.use(bodyParser.json());
 app.use("/", userRouter);
 app.use("/user", userRouter);
 app.use("/expense", userauthentication.authenticate, expenseRouter);
+app.use("/purchase", purchaseMembershipRouter);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 sequelize
   .sync()
