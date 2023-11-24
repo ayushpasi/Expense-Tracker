@@ -9,7 +9,7 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const user = jwt.verify(token, "v%#JK2$5dfP!9sL@3gH*ZaE");
+    const user = jwt.verify(token, process.env.TOKEN_SECRET);
     const userData = await userModel.findByPk(user.userId);
     console.log("userData" + userData);
     req.user = userData;
