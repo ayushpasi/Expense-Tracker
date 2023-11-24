@@ -41,6 +41,11 @@ const updateTransactionStatus = async (req, res) => {
         return res.status(202).json({
           sucess: true,
           message: "Transaction Successful",
+          token: userController.generateAccessToken(
+            req.user.id,
+            req.user.name,
+            true
+          ),
         });
       })
       .catch((error) => {

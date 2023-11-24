@@ -67,9 +67,30 @@ async function addNewExpense(e) {
     console.error(error);
   }
 }
+const parseJwt = (token) => {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+};
 
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
+  const decodedToken = parseJwt(token);
+  if (decodedToken.isPremiumUser) {
+    document.getElementById("rzp-button1").style.display = "none";
+    document.getElementById("message").innerHTML = "You are a premium user now";
+    displayLeaderboard();
+  }
   axios
     .get("http://localhost:3000/expense/getAllExpenses", {
       headers: { Authorization: token },
@@ -105,13 +126,16 @@ async function buyPremium(e) {
         },
         { headers: { Authorization: token } }
       );
-
       console.log(res);
-      alert(
-        "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
-      );
-      window.location.reload();
-      // localStorage.setItem("token", res.data.token);
+
+      // alert(
+      //   "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
+      // );
+      document.getElementById("rzp-button1").style.display = "none";
+      document.getElementById("message").innerHTML =
+        "You are a premium user now";
+      localStorage.setItem("token", res.data.token);
+      displayLeaderboard();
     },
   };
   const rzp1 = new Razorpay(options);
@@ -123,4 +147,58 @@ async function buyPremium(e) {
     console.log(response.error.description);
     alert(`Something went wrong`);
   });
+}
+
+// Function to fetch leaderboard data using Axios
+async function fetchLeaderboardData() {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/premium/showLeaderBoard"
+    );
+    return response.data.userLeaderboardDetails;
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return [];
+  }
+}
+
+// Display leaderboard function
+async function displayLeaderboard() {
+  const leaderboardButton = document.getElementById("showLeaderBoard");
+  leaderboardButton.style.display = "block";
+
+  leaderboardButton.addEventListener("click", async () => {
+    document.getElementById("leaderboardContainer").style.display = "block";
+    const leaderboardBody = document.getElementById("leaderboardBody");
+    leaderboardBody.innerHTML = ""; // Clear previous content
+
+    try {
+      const userLeaderboardDetails = await fetchLeaderboardData();
+
+      userLeaderboardDetails.forEach((user, index) => {
+        const row = document.createElement("tr");
+
+        const rankCell = document.createElement("td");
+        rankCell.textContent = index + 1;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = user.name;
+
+        const costCell = document.createElement("td");
+        costCell.textContent = user.total_cost;
+
+        row.appendChild(rankCell);
+        row.appendChild(nameCell);
+        row.appendChild(costCell);
+
+        leaderboardBody.appendChild(row);
+      });
+      leaderboardButton.style.display = "none";
+    } catch (error) {
+      console.error("Error displaying leaderboard:", error);
+    }
+  });
+
+  // Add the button to the DOM
+  document.body.appendChild(leaderboardButton);
 }

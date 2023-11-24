@@ -11,6 +11,7 @@ const Order = require("./models/ordersModel");
 
 const userauthentication = require("./middleware/authentication");
 const purchaseMembershipRouter = require("./routes/purchaseMembershipRouter");
+const premiumFeatureRouter = require("./routes/premiumFeatureRouter");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -25,6 +26,7 @@ app.use("/", userRouter);
 app.use("/user", userRouter);
 app.use("/expense", userauthentication.authenticate, expenseRouter);
 app.use("/purchase", purchaseMembershipRouter);
+app.use("/premium", premiumFeatureRouter);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

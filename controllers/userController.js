@@ -43,8 +43,11 @@ const postUserSignUp = async (req, res) => {
   }
 };
 
-const generateAccessToken = (id, name) => {
-  return jwt.sign({ userId: id, name: name }, "v%#JK2$5dfP!9sL@3gH*ZaE");
+const generateAccessToken = (id, name, isPremiumUser) => {
+  return jwt.sign(
+    { userId: id, name: name, isPremiumUser },
+    "v%#JK2$5dfP!9sL@3gH*ZaE"
+  );
 };
 const postUserLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -59,7 +62,11 @@ const postUserLogin = async (req, res) => {
         if (result == true) {
           res.status(200).json({
             message: "user logged in succesfully",
-            token: generateAccessToken(existingUser.id, existingUser.name),
+            token: generateAccessToken(
+              existingUser.id,
+              existingUser.name,
+              existingUser.isPremiumUser
+            ),
           });
         } else {
           res.status(401).json({ error: "User not authorized" });
