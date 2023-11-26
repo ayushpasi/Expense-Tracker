@@ -43,7 +43,6 @@ function updateRow(btn) {
 }
 
 async function addNewExpense(e) {
-  alert("save");
   e.preventDefault();
   let expenseAmount = e.target.expenseAmount.value;
   let expenseDescription = e.target.expenseDescription.value;
@@ -153,7 +152,8 @@ async function buyPremium(e) {
 async function fetchLeaderboardData() {
   try {
     const response = await axios.get(
-      "http://localhost:3000/premium/showLeaderBoard"
+      "http://localhost:3000/premium/showLeaderBoard",
+      { headers: { Authorization: token } }
     );
     return response.data.userLeaderboardDetails;
   } catch (error) {
@@ -185,7 +185,7 @@ async function displayLeaderboard() {
         nameCell.textContent = user.name;
 
         const costCell = document.createElement("td");
-        costCell.textContent = user.total_cost;
+        costCell.textContent = user.totalExpense;
 
         row.appendChild(rankCell);
         row.appendChild(nameCell);

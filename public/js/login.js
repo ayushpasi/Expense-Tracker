@@ -13,7 +13,7 @@ signIn.addEventListener("click", () => {
 });
 
 async function loginForm(e) {
-  event.preventDefault(); // Prevent the default form submission behavior
+  e.preventDefault(); // Prevent the default form submission behavior
   const email = e.target.loginEmail.value;
   const password = e.target.loginPassword.value;
 

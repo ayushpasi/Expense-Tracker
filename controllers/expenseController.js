@@ -1,5 +1,5 @@
-const { where } = require("sequelize");
 const ExpenseModel = require("../models/expenseModel");
+const UserModel = require("../models/userModel");
 
 //save data to database
 
@@ -15,7 +15,16 @@ const addExpense = async (req, res, next) => {
       expenseCategory: expenseCategory,
       userId: req.user.id,
     });
-
+    //updating total expenses of user in user table
+    const user = await UserModel.findByPk(req.user.id);
+    if (user.totalExpense == null) {
+      newtotalExpense = parseInt(expenseAmount);
+    } else {
+      newtotalExpense = parseInt(user.totalExpense) + parseInt(expenseAmount);
+    }
+    await user.update({
+      totalExpense: newtotalExpense,
+    });
     res.status(201).json({ expense: data });
   } catch (error) {
     console.log(error);

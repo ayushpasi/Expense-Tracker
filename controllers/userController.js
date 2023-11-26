@@ -54,7 +54,6 @@ const postUserLogin = async (req, res) => {
   try {
     const existingUser = await UserModel.findOne({ where: { email: email } });
     if (existingUser) {
-      console.log(existingUser);
       bcrypt.compare(password, existingUser.password, (err, result) => {
         if (err) {
           res.status(500).json({ error: "somthing went wrong" });

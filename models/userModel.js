@@ -12,6 +12,7 @@ const UserModel = sequelize.define("users", {
   email: Sequelize.STRING,
   password: Sequelize.STRING,
   isPremiumUser: Sequelize.BOOLEAN,
+  totalExpense: Sequelize.INTEGER,
 });
 
 module.exports = UserModel;

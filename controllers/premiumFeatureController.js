@@ -4,23 +4,10 @@ const sequelize = require("sequelize");
 const getUserLeaderBoard = async (req, res) => {
   try {
     const userLeaderboardDetails = await userModel.findAll({
-      attributes: [
-        "name",
-        [
-          sequelize.fn("sum", sequelize.col("expenses.expenseAmount")),
-          "total_cost",
-        ],
-      ],
-      include: [
-        {
-          model: expenseModel,
-          attributes: [],
-        },
-      ],
-      group: ["users.id"],
-      order: [[sequelize.literal("total_cost"), "DESC"]],
+      attributes: ["name", "totalExpense"],
+      order: [[sequelize.literal("totalExpense"), "DESC"]],
     });
-    console.log(userLeaderboardDetails);
+
     res.status(200).json({ userLeaderboardDetails });
     //Brute force approach
     // const users = await userModel.findAll();
@@ -42,6 +29,25 @@ const getUserLeaderBoard = async (req, res) => {
     // });
 
     // userLeaderboardDetails.sort((a, b) => b.total_cost - a.total_cost);
+    // res.status(200).json({ userLeaderboardDetails });
+    // const userLeaderboardDetails = await userModel.findAll({
+    //   attributes: [
+    //     "name",
+    //     [
+    //       sequelize.fn("sum", sequelize.col("expenses.expenseAmount")),
+    //       "total_cost",
+    //     ],
+    //   ],
+    //   include: [
+    //     {
+    //       model: expenseModel,
+    //       attributes: [],
+    //     },
+    //   ],
+    //   group: ["users.id"],
+    //   order: [[sequelize.literal("total_cost"), "DESC"]],
+    // });
+    // console.log(userLeaderboardDetails);
     // res.status(200).json({ userLeaderboardDetails });
   } catch (error) {
     res.status(500).json({ error: "An error occurred while fetching data" });
