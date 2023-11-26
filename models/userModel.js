@@ -8,11 +8,27 @@ const UserModel = sequelize.define("users", {
     allowNull: false,
     primaryKey: true,
   },
-  name: Sequelize.STRING,
-  email: Sequelize.STRING,
-  password: Sequelize.STRING,
-  isPremiumUser: Sequelize.BOOLEAN,
-  totalExpense: Sequelize.INTEGER,
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  isPremiumUser: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+  totalExpense: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 module.exports = UserModel;

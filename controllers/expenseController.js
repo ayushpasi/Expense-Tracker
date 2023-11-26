@@ -17,11 +17,9 @@ const addExpense = async (req, res, next) => {
     });
     //updating total expenses of user in user table
     const user = await UserModel.findByPk(req.user.id);
-    if (user.totalExpense == null) {
-      newtotalExpense = parseInt(expenseAmount);
-    } else {
-      newtotalExpense = parseInt(user.totalExpense) + parseInt(expenseAmount);
-    }
+    const newtotalExpense =
+      parseInt(req.user.totalExpense) + parseInt(expenseAmount);
+
     await user.update({
       totalExpense: newtotalExpense,
     });
