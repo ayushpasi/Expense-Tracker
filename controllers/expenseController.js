@@ -1,31 +1,42 @@
 const ExpenseModel = require("../models/expenseModel");
 const UserModel = require("../models/userModel");
-
+const sequelize = require("../util/database");
 //save data to database
-
 const addExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
   try {
     const expenseAmount = req.body.expenseAmount;
     const expenseDescription = req.body.expenseDescription;
     const expenseCategory = req.body.expenseCategory;
 
-    const data = await ExpenseModel.create({
-      expenseAmount: expenseAmount,
-      expenseDescription: expenseDescription,
-      expenseCategory: expenseCategory,
-      userId: req.user.id,
-    });
-    //updating total expenses of user in user table
-    const user = await UserModel.findByPk(req.user.id);
-    const newtotalExpense =
+    const data = await ExpenseModel.create(
+      {
+        expenseAmount: expenseAmount,
+        expenseDescription: expenseDescription,
+        expenseCategory: expenseCategory,
+        userId: req.user.id,
+      },
+      { transaction: t }
+    );
+
+    const newTotalExpense =
       parseInt(req.user.totalExpense) + parseInt(expenseAmount);
 
-    await user.update({
-      totalExpense: newtotalExpense,
-    });
+    await UserModel.update(
+      {
+        totalExpense: newTotalExpense,
+      },
+      {
+        where: { id: req.user.id },
+        transaction: t, // Pass the transaction object here
+      }
+    );
+
+    await t.commit();
     res.status(201).json({ expense: data });
   } catch (error) {
-    console.log(error);
+    await t.rollback();
+    console.error(error);
     res.status(500).json({
       error: "Failed to create a new expense",
       message: error.message,
@@ -49,35 +60,62 @@ const getAllExpenses = async (req, res, next) => {
 
 //delete user
 const deleteExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
   try {
-    const userId = req.params.id;
-    console.log("hello");
-    console.log(userId);
-    if (!userId) {
+    const expenseId = req.params.id; // Use expenseId instead of userId
+    console.log(expenseId);
+    if (!expenseId) {
       return res.status(400).json({
-        error: "Id missing",
+        error: "Expense ID missing",
       });
     }
 
-    const result = await ExpenseModel.destroy({
+    // Check if the expense exists for the given ID
+    const expense = await ExpenseModel.findOne({
       where: {
-        id: userId,
+        id: expenseId,
       },
+      transaction: t,
     });
 
-    if (result === 1) {
+    if (!expense) {
+      await t.rollback();
+      return res.status(404).json({
+        error: "Expense not found",
+      });
+    }
+
+    // Delete the expense
+    const deleteResult = await ExpenseModel.destroy({
+      where: {
+        id: expenseId,
+      },
+      transaction: t,
+    });
+
+    // Update total expense of the user
+    const newTotalExpense = req.user.totalExpense - expense.expenseAmount;
+    await req.user.update(
+      { totalExpense: newTotalExpense },
+      { transaction: t }
+    );
+
+    await t.commit();
+
+    if (deleteResult === 1) {
       return res.status(200).json({
-        success: "User deleted successfully",
+        success: "Expense deleted successfully",
       });
     } else {
       return res.status(404).json({
-        error: "User not found", // Notify if the user with the given ID was not found
+        error: "Expense not found",
       });
     }
   } catch (err) {
-    console.log(err);
+    await t.rollback();
+    console.error(err);
     res.status(500).json({
-      error: "Error in deleting",
+      error: "Error in deleting expense",
     });
   }
 };
