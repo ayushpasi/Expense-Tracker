@@ -202,3 +202,23 @@ async function displayLeaderboard() {
   // Add the button to the DOM
   document.body.appendChild(leaderboardButton);
 }
+
+const download = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get("http://localhost:3000/user/download", {
+      headers: { Authorization: token },
+    });
+    if (response.status === 200) {
+      var a = document.createElement("a");
+      a.href = response.data.fileUrl;
+      a.download = "myexpense.csv";
+      a.click();
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
