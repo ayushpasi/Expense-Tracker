@@ -8,6 +8,7 @@ const expenseRouter = require("./routes/expenseRouter");
 const Expense = require("./models/expenseModel");
 const User = require("./models/userModel");
 const Order = require("./models/ordersModel");
+const ResetPassword = require("./models/resetPasswordModel");
 
 const userauthentication = require("./middleware/authentication");
 const purchaseMembershipRouter = require("./routes/purchaseMembershipRouter");
@@ -20,6 +21,7 @@ dotenv.config();
 
 const cors = require("cors");
 const app = express();
+
 app.use(express.static("public"));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,6 +39,9 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+ResetPassword.belongsTo(User);
+User.hasMany(ResetPassword);
 
 sequelize
   .sync()
