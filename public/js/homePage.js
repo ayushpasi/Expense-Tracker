@@ -89,21 +89,9 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("rzp-button1").style.display = "none";
     document.getElementById("message").innerHTML = "You are a premium user now";
     displayLeaderboard();
+    document.getElementById("downloadexpense").style.display = "block";
   }
-  axios
-    .get("http://localhost:3000/expense/getAllExpenses", {
-      headers: { Authorization: token },
-    })
-    .then((res) => {
-      console.log("fetched:" + res.data);
-      var data = res.data;
-      data.forEach((item) => {
-        addRowsToTable(item);
-      });
-    })
-    .catch((err) => {
-      console.log("Error fetching data:", err);
-    });
+  getAllExpenses();
 });
 
 async function buyPremium(e) {
@@ -222,3 +210,57 @@ const download = async () => {
     console.log(err);
   }
 };
+
+async function getAllExpenses() {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      "http://localhost:3000/expense/getAllExpenses/1",
+      { headers: { Authorization: token } }
+    );
+
+    const table = document.getElementById("expenseTableBody"); // Assuming you have a tbody with id="expenseTableBody"
+    table.innerHTML = ""; // Clear the table before populating with new data
+
+    res.data.expenses.forEach((expense) => {
+      addRowsToTable(expense);
+    });
+
+    const ul = document.getElementById("paginationUL");
+    ul.innerHTML = ""; // Clear the pagination before re-creating
+
+    for (let i = 1; i <= res.data.totalPages; i++) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      li.setAttribute("class", "page-item");
+      a.setAttribute("class", "page-link");
+      a.setAttribute("href", "#");
+      a.appendChild(document.createTextNode(i));
+      li.appendChild(a);
+      ul.appendChild(li);
+      a.addEventListener("click", paginationBtn);
+    }
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+  }
+}
+
+async function paginationBtn(e) {
+  try {
+    const pageNo = e.target.textContent;
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      `http://localhost:3000/expense/getAllExpenses/${pageNo}`,
+      { headers: { Authorization: token } }
+    );
+
+    const table = document.getElementById("expenseTableBody");
+    table.innerHTML = ""; // Clear the table before populating with new data
+
+    res.data.expenses.forEach((expense) => {
+      addRowsToTable(expense);
+    });
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+  }
+}

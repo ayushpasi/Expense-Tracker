@@ -3,6 +3,7 @@ const UserModel = require("../models/userModel");
 const sequelize = require("../util/database");
 const Userservices = require("../services/userservices");
 const S3services = require("../services/S3services");
+const { where } = require("sequelize");
 const downloadExpenses = async (req, res) => {
   try {
     const expenses = await Userservices.getExpenses(req);
@@ -77,6 +78,35 @@ const getAllExpenses = async (req, res, next) => {
   }
 };
 
+//expenses pagination
+const getAllExpensesforPagination = async (req, res) => {
+  try {
+    const pageNo = req.params.page;
+    const limit = 2;
+    const offset = (pageNo - 1) * limit;
+
+    const totalExpenses = await ExpenseModel.count({
+      where: {
+        userId: 1,
+      },
+    });
+    const totalPages = Math.ceil(totalExpenses / limit);
+
+    const expenses = await ExpenseModel.findAll({
+      where: {
+        userId: 1,
+      },
+      offset: offset,
+      limit: limit,
+    });
+
+    res.status(200).json({ expenses: expenses, totalPages: totalPages });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 //delete user
 const deleteExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
@@ -144,4 +174,5 @@ module.exports = {
   getAllExpenses,
   deleteExpense,
   downloadExpenses,
+  getAllExpensesforPagination,
 };

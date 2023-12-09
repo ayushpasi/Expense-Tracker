@@ -76,7 +76,9 @@
     </table>
 
     <button id="showLeaderBoard" style="display: none">showLeaderBoard</button>
-    <button onclick="download()" id="downloadexpense">Download reoprt</button>
+    <button onclick="download()" id="downloadexpense" style="display: none">
+      Download reoprt
+    </button>
     <div id="leaderboardContainer" style="display: none">
       <h1>User Leaderboard</h1>
       <table id="leaderboard">
@@ -90,6 +92,12 @@
         <tbody id="leaderboardBody"></tbody>
       </table>
     </div>
+
+    <ul id="paginationUL" class="pagination justify-content-md-end">
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+    </ul>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js "></script>
