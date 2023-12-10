@@ -91,7 +91,8 @@ window.addEventListener("DOMContentLoaded", () => {
     displayLeaderboard();
     document.getElementById("downloadexpense").style.display = "block";
   }
-  getAllExpenses();
+  const limit = parseInt(document.getElementById("rowsPerPage").value);
+  getAllExpenses(1, limit);
 });
 
 async function buyPremium(e) {
@@ -211,15 +212,20 @@ const download = async () => {
   }
 };
 
-async function getAllExpenses() {
+document.getElementById("rowsPerPage").addEventListener("change", function () {
+  const limit = parseInt(this.value);
+  getAllExpenses(1, limit);
+});
+
+async function getAllExpenses(pageNo, limit) {
   try {
     const token = localStorage.getItem("token");
     const res = await axios.get(
-      "http://localhost:3000/expense/getAllExpenses/1",
+      `http://localhost:3000/expense/getAllExpenses/${pageNo}?limit=${limit}`,
       { headers: { Authorization: token } }
     );
 
-    const table = document.getElementById("expenseTableBody"); // Assuming you have a tbody with id="expenseTableBody"
+    const table = document.getElementById("expenseTableBody");
     table.innerHTML = ""; // Clear the table before populating with new data
 
     res.data.expenses.forEach((expense) => {
@@ -238,28 +244,11 @@ async function getAllExpenses() {
       a.appendChild(document.createTextNode(i));
       li.appendChild(a);
       ul.appendChild(li);
-      a.addEventListener("click", paginationBtn);
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        getAllExpenses(i, limit);
+      });
     }
-  } catch (error) {
-    console.error("Error fetching expenses:", error);
-  }
-}
-
-async function paginationBtn(e) {
-  try {
-    const pageNo = e.target.textContent;
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      `http://localhost:3000/expense/getAllExpenses/${pageNo}`,
-      { headers: { Authorization: token } }
-    );
-
-    const table = document.getElementById("expenseTableBody");
-    table.innerHTML = ""; // Clear the table before populating with new data
-
-    res.data.expenses.forEach((expense) => {
-      addRowsToTable(expense);
-    });
   } catch (error) {
     console.error("Error fetching expenses:", error);
   }

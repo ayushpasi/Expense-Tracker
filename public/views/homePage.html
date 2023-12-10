@@ -93,10 +93,19 @@
       </table>
     </div>
 
+    <!-- dynamic pagination -->
+    <label for="rowsPerPage">Rows per page:</label>
+    <select id="rowsPerPage">
+      <option selected value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+
     <ul id="paginationUL" class="pagination justify-content-md-end">
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
       <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li> -->
     </ul>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

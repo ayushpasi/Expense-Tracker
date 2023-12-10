@@ -82,19 +82,19 @@ const getAllExpenses = async (req, res, next) => {
 const getAllExpensesforPagination = async (req, res) => {
   try {
     const pageNo = req.params.page;
-    const limit = 2;
+    const limit = parseInt(req.query.limit || 10);
     const offset = (pageNo - 1) * limit;
 
     const totalExpenses = await ExpenseModel.count({
       where: {
-        userId: 1,
+        userId: req.user.id,
       },
     });
     const totalPages = Math.ceil(totalExpenses / limit);
 
     const expenses = await ExpenseModel.findAll({
       where: {
-        userId: 1,
+        userId: req.user.id,
       },
       offset: offset,
       limit: limit,
