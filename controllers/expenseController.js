@@ -3,6 +3,7 @@ const UserModel = require("../models/userModel");
 const sequelize = require("../util/database");
 const Userservices = require("../services/userservices");
 const S3services = require("../services/S3services");
+const path = require("path");
 const { where } = require("sequelize");
 const downloadExpenses = async (req, res) => {
   try {
@@ -25,12 +26,14 @@ const downloadExpenses = async (req, res) => {
 const addExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
   try {
+    const date = req.body.date;
     const expenseAmount = req.body.expenseAmount;
     const expenseDescription = req.body.expenseDescription;
     const expenseCategory = req.body.expenseCategory;
 
     const data = await ExpenseModel.create(
       {
+        date: date,
         expenseAmount: expenseAmount,
         expenseDescription: expenseDescription,
         expenseCategory: expenseCategory,
@@ -168,6 +171,15 @@ const deleteExpense = async (req, res, next) => {
     });
   }
 };
+const getHomePage = async (req, res, next) => {
+  try {
+    res.sendFile(
+      path.join(__dirname, "../", "public", "views", "homePage.html")
+    );
+  } catch {
+    (err) => console.log(err);
+  }
+};
 
 module.exports = {
   addExpense,
@@ -175,4 +187,5 @@ module.exports = {
   deleteExpense,
   downloadExpenses,
   getAllExpensesforPagination,
+  getHomePage,
 };

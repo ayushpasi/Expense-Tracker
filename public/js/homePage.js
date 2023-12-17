@@ -1,16 +1,24 @@
 // Function to add rows to the table
+const buyPremiumBtn = document.getElementById("buyPremiumBtn");
+const reportsLink = document.getElementById("reportsLink");
+const leaderboardLink = document.getElementById("leaderboardLink");
+const logoutBtn = document.getElementById("logoutBtn");
+
 const token = localStorage.getItem("token");
 function addRowsToTable(expense) {
   var tbody = document.getElementById("expenseTableBody");
   var tableContent = "";
 
   tableContent += `<tr>
+    <td>${expense.date}</td>
     <td>${expense.expenseAmount}</td>
     <td>${expense.expenseDescription}</td>
     <td>${expense.expenseCategory}</td>
     <td>
-      <button class="btn-delete" onclick="deleteRow(this,${expense.id})">Delete</button>
-      <button class="btn-update" onclick="updateRow(this)">Update</button>
+    <button class="btn btn-danger" onclick="deleteRow(this, ${expense.id})">
+    <i class="bi bi-trash"></i> 
+  </button>
+  
     </td>
   </tr>`;
 
@@ -47,7 +55,35 @@ async function addNewExpense(e) {
   let expenseAmount = e.target.expenseAmount.value;
   let expenseDescription = e.target.expenseDescription.value;
   let expenseCategory = e.target.expenseCategory.value;
+  if (expenseCategory == "Select Category") {
+    alert("Select the Category!");
+    window.location.href("/homePage");
+  }
+  if (!expenseDescription) {
+    alert("Add the Description!");
+    window.location.href("/homePage");
+  }
+  if (!parseInt(expenseAmount)) {
+    alert("Please enter the valid amount!");
+    window.location.href("/homePage");
+  }
+
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+
+  // add leading zeros to day and month if needed
+  const formattedDay = day < 10 ? `0${day}` : day;
+  const formattedMonth = month < 10 ? `0${month}` : month;
+
+  // create the date string in date-month-year format
+  const dateStr = `${formattedDay}-${formattedMonth}-${year}`;
+
+  console.log(dateStr); // outputs something like "23-02-2023"
+
   let expense = {
+    date: dateStr,
     expenseAmount: expenseAmount,
     expenseDescription: expenseDescription,
     expenseCategory: expenseCategory,
@@ -86,10 +122,12 @@ window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
   if (decodedToken.isPremiumUser) {
-    document.getElementById("rzp-button1").style.display = "none";
-    document.getElementById("message").innerHTML = "You are a premium user now";
-    displayLeaderboard();
-    document.getElementById("downloadexpense").style.display = "block";
+    buyPremiumBtn.innerHTML = "Premium Member &#128142";
+    reportsLink.removeAttribute("onclick");
+    leaderboardLink.removeAttribute("onclick");
+    leaderboardLink.setAttribute("href", "/premium/getLeaderboardPage");
+    reportsLink.setAttribute("href", "/premium/getReportsPage");
+    buyPremiumBtn.removeEventListener("click", buyPremium);
   }
   const limit = parseInt(document.getElementById("rowsPerPage").value);
   getAllExpenses(1, limit);
@@ -191,26 +229,6 @@ async function displayLeaderboard() {
   // Add the button to the DOM
   document.body.appendChild(leaderboardButton);
 }
-
-const download = async () => {
-  const token = localStorage.getItem("token");
-
-  try {
-    const response = await axios.get("http://localhost:3000/user/download", {
-      headers: { Authorization: token },
-    });
-    if (response.status === 200) {
-      var a = document.createElement("a");
-      a.href = response.data.fileUrl;
-      a.download = "myexpense.csv";
-      a.click();
-    } else {
-      throw new Error(response.data.message);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 document.getElementById("rowsPerPage").addEventListener("change", function () {
   const limit = parseInt(this.value);

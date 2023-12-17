@@ -1,9 +1,12 @@
-const userModel = require("../models/userModel");
-const expenseModel = require("../models/expenseModel");
+const UserModel = require("../models/userModel");
+const ExpenseModel = require("../models/expenseModel");
 const sequelize = require("sequelize");
+const path = require("path");
+const { Op } = require("sequelize");
+
 const getUserLeaderBoard = async (req, res) => {
   try {
-    const userLeaderboardDetails = await userModel.findAll({
+    const userLeaderboardDetails = await UserModel.findAll({
       attributes: ["name", "totalExpense"],
       order: [[sequelize.literal("totalExpense"), "DESC"]],
     });
@@ -54,4 +57,55 @@ const getUserLeaderBoard = async (req, res) => {
   }
 };
 
-module.exports = { getUserLeaderBoard };
+const getLeaderboardPage = (req, res, next) => {
+  try {
+    res.sendFile(
+      path.join(__dirname, "../", "public", "views", "leaderboard.html")
+    );
+  } catch {
+    (err) => console.log(err);
+  }
+};
+const getReportsPage = (req, res, next) => {
+  res.sendFile(path.join(__dirname, "../", "public", "views", "reports.html"));
+};
+
+const dailyReports = async (req, res, next) => {
+  try {
+    const date = req.body.date;
+    const expenses = await ExpenseModel.findAll({
+      where: { date: date, userId: req.user.id },
+    });
+    return res.send(expenses);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const monthlyReports = async (req, res, next) => {
+  try {
+    const month = req.body.month;
+
+    const expenses = await ExpenseModel.findAll({
+      where: {
+        date: {
+          [Op.like]: `%-${month}-%`,
+        },
+        userId: req.user.id,
+      },
+      raw: true,
+    });
+
+    return res.json(expenses);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  getUserLeaderBoard,
+  getLeaderboardPage,
+  getReportsPage,
+  dailyReports,
+  monthlyReports,
+};

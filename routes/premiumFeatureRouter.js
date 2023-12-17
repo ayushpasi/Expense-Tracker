@@ -8,5 +8,19 @@ router.get(
   userauthentication.authenticate,
   premiumFeatureController.getUserLeaderBoard
 );
+router.get("/getLeaderboardPage", premiumFeatureController.getLeaderboardPage);
+
+router.get("/getReportsPage", premiumFeatureController.getReportsPage);
+
+router.post(
+  "/dailyReports",
+  userauthentication.authenticate,
+  premiumFeatureController.dailyReports
+);
+router.post(
+  "/monthlyReports",
+  userauthentication.authenticate,
+  premiumFeatureController.monthlyReports
+);
 
 module.exports = router;
