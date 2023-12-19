@@ -1,7 +1,5 @@
 const express = require("express");
 // const helmet = require("helmet");
-const dotenv = require("dotenv");
-dotenv.config();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const path = require("path");
@@ -23,6 +21,8 @@ const premiumFeatureRouter = require("./routes/premiumFeatureRouter");
 
 const resetPasswordRouter = require("./routes/resetPasswordRouter");
 
+const dotenv = require("dotenv");
+dotenv.config();
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
   { flags: "a" }
@@ -54,6 +54,7 @@ Order.belongsTo(User);
 
 ResetPassword.belongsTo(User);
 User.hasMany(ResetPassword);
+
 sequelize
   .sync()
   .then(() => {

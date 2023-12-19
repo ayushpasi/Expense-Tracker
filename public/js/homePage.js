@@ -132,7 +132,6 @@ window.addEventListener("DOMContentLoaded", () => {
   const limit = parseInt(document.getElementById("rowsPerPage").value);
   getAllExpenses(1, limit);
 });
-buyPremiumBtn.addEventListener("click", buyPremium);
 
 async function buyPremium(e) {
   const token = localStorage.getItem("token");
@@ -155,11 +154,12 @@ async function buyPremium(e) {
       );
       console.log(res);
 
-      alert(
-        "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
-      );
-      window.location.reload();
-
+      // alert(
+      //   "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
+      // );
+      document.getElementById("rzp-button1").style.display = "none";
+      document.getElementById("message").innerHTML =
+        "You are a premium user now";
       localStorage.setItem("token", res.data.token);
       displayLeaderboard();
     },
