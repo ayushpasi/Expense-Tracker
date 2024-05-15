@@ -27,7 +27,7 @@ async function loginForm(e) {
       alert("login sucsses full");
       localStorage.setItem("token", response.data.token);
 
-      window.location.href = "../views/homePage.html";
+      window.location.href = "/homePage";
     }
   } catch (error) {
     console.log(error.response.status);

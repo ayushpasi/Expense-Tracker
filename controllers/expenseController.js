@@ -4,16 +4,24 @@ const sequelize = require("../util/database");
 const Userservices = require("../services/userservices");
 const S3services = require("../services/S3services");
 const path = require("path");
-const { where } = require("sequelize");
+
 const downloadExpenses = async (req, res) => {
   try {
     const expenses = await Userservices.getExpenses(req);
     // console.log(expenses);
-    const stringifiedExpenses = JSON.stringify(expenses);
     //it should depend upon the userId
-    const userId = req.user.id;
-    const filename = `Expense${userId}/${new Date()}.txt`;
-    const fileUrl = await S3services.uploadToS3(stringifiedExpenses, filename);
+    const user = req.user;
+    const formattedExpenses = expenses.map((expense) => {
+      return `Category: ${expense.expenseCategory}
+      Amount: ${expense.expenseAmount}
+      Date: ${expense.date}
+`;
+    });
+    const textData = formattedExpenses.join("\n");
+    const filename = `expense-data/user${user.id}/${
+      user.name
+    }${new Date()}.txt`;
+    const fileUrl = await S3services.uploadToS3(textData, filename);
     // console.log("file Url>>>>>" + fileUrl);
     res.json({ fileUrl, success: true });
   } catch (err) {
@@ -181,6 +189,40 @@ const getHomePage = async (req, res, next) => {
   }
 };
 
+const editExpense = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const category = req.body.expenseCategory;
+    const description = req.body.expenseDescription;
+    const amount = req.body.expenseAmount;
+    console.log("expense id" + id);
+    console.log(req.user.id);
+    const expense = await ExpenseModel.findByPk(id);
+    const newTotalExpense =
+      parseInt(req.user.totalExpense) -
+      parseInt(expense.expenseAmount) +
+      parseInt(amount);
+
+    await UserModel.update(
+      { totalExpense: newTotalExpense },
+      { where: { id: req.user.id } }
+    );
+
+    await ExpenseModel.update(
+      {
+        expenseCategory: category,
+        expenseDescription: description,
+        expenseAmount: amount,
+      },
+      { where: { id: id, userId: req.user.id } }
+    );
+    res.status(200).json({ message: "updated succesfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error editing expense");
+  }
+};
+
 module.exports = {
   addExpense,
   getAllExpenses,
@@ -188,4 +230,5 @@ module.exports = {
   downloadExpenses,
   getAllExpensesforPagination,
   getHomePage,
+  editExpense,
 };

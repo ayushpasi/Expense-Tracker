@@ -3,14 +3,6 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 
-const getLoginPage = async (req, res, next) => {
-  try {
-    res.sendFile(path.join(__dirname, "../", "public", "views", "login.html"));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const postUserSignUp = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -78,6 +70,15 @@ const postUserLogin = async (req, res) => {
     console.log(err);
   }
 };
+
+const getLoginPage = async (req, res, next) => {
+  try {
+    res.sendFile(path.join(__dirname, "../", "public", "views", "login.html"));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   postUserSignUp,
   getLoginPage,

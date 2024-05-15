@@ -9,18 +9,12 @@ const hashPassword = async (password) => {
   return await bcrypt.hash(password, 10);
 };
 
-const forgotPasswordPage = (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../", "public", "views", "forgotPassword.html")
-  );
-};
-
 const sendMail = async (req, res) => {
   try {
     const requestId = uuid.v4();
     const { email } = req.body;
     const recepientEmail = await UserModel.findOne({ where: { email: email } });
-    console.log(recepientEmail);
+    // console.log(recepientEmail);
     if (!recepientEmail) {
       return res
         .status(404)
@@ -73,14 +67,6 @@ const sendMail = async (req, res) => {
   }
 };
 
-const resetPasswordPage = async (req, res) => {
-  res
-    .status(200)
-    .sendFile(
-      path.join(__dirname, "../", "public", "views", "resetPassword.html")
-    );
-};
-
 const updatePassword = async (req, res) => {
   try {
     const requestId = req.headers.referer.split("/");
@@ -113,6 +99,20 @@ const updatePassword = async (req, res) => {
     return res.status(403).json({ error, success: false });
   }
 };
+
+const forgotPasswordPage = (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../", "public", "views", "forgotPassword.html")
+  );
+};
+const resetPasswordPage = async (req, res) => {
+  res
+    .status(200)
+    .sendFile(
+      path.join(__dirname, "../", "public", "views", "resetPassword.html")
+    );
+};
+
 module.exports = {
   forgotPasswordPage,
   sendMail,

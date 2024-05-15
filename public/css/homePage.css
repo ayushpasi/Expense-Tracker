@@ -18,13 +18,14 @@ body {
 }
 #my-form {
   border-radius: 10px;
-  background-color: #3d5a80;
+  background: linear-gradient(to right, #0000ff, #000090);
+
   box-shadow: 4px 4px 9px #293241;
   margin: 20px 193px;
 }
 #table {
   border-radius: 10px;
-  background-color: #d2eaf7;
+  /* background-color: #d2eaf7; */
   /* background-image: linear-gradient(to bottom right, #c7e9fd, #3d5a80); */
   box-shadow: 4px 4px 9px #b8b8b8;
 }
@@ -40,7 +41,7 @@ body {
   color: #293241;
 }
 #navigation {
-  background-color: #233b64;
+  background: linear-gradient(to right, #0000ff, #000090);
 }
 #categoryBtn {
   background-color: #293241;
@@ -82,11 +83,11 @@ body {
 }
 
 #tableHead {
-  background-color: #3d5a80;
+  background-color: #0000ff;
   color: white;
 }
 .page-link {
-  background-color: #3d5a80;
+  background-color: #0000ff;
   color: white;
 }
 .page-link:hover {

@@ -43,4 +43,14 @@ async function displayLeaderboard() {
     console.error("Error displaying leaderboard:", error);
   }
 }
+async function logout() {
+  try {
+    localStorage.clear();
+    window.location.href = "/";
+  } catch (error) {
+    console.log(error);
+  }
+}
+logoutBtn.addEventListener("click", logout);
+
 document.addEventListener("DOMContentLoaded", displayLeaderboard);

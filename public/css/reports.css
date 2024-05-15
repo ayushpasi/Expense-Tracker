@@ -16,18 +16,16 @@ body {
 #png {
   margin-right: 10px;
 }
-#navigation {
-  background-color: #233b64;
-}
-#form1 {
+#my-form {
   border-radius: 10px;
-  background-color: #3d5a80;
+  background: linear-gradient(to right, #0000ff, #000090);
+
   box-shadow: 4px 4px 9px #293241;
   margin: 20px 193px;
 }
 #table {
   border-radius: 10px;
-  background-color: #d2eaf7;
+  /* background-color: #d2eaf7; */
   /* background-image: linear-gradient(to bottom right, #c7e9fd, #3d5a80); */
   box-shadow: 4px 4px 9px #b8b8b8;
 }
@@ -37,25 +35,13 @@ body {
   border-color: #293241;
   color: white;
 }
-.showBtn {
-  width: 80px;
-  background-color: #293241;
-  border-color: #293241;
-  color: white;
-}
 .topBtn {
   background-color: white;
   border-color: white;
   color: #293241;
 }
-#year-input {
-  background-color: white;
-  width: auto;
-  border: 1px;
-  border-radius: 7px;
-  color: #293241;
-  padding: 7px;
-  margin: 7px -4px;
+#navigation {
+  background: linear-gradient(to right, #0000ff, #000090);
 }
 #categoryBtn {
   background-color: #293241;
@@ -81,8 +67,7 @@ body {
 }
 #categoryBtn:hover,
 #submitBtn:hover,
-.editDelete:hover,
-.showBtn:hover {
+.editDelete:hover {
   background-color: #ffffff;
   color: #293241;
   border-color: #293241;
@@ -97,9 +82,48 @@ body {
   border: none;
 }
 
-#dailyTotal,
-#dailyTotalAmount,
-#monthlyTotal,
-#monthlyTotalAmount {
-  font-weight: bolder !important;
+#tableHead {
+  background-color: #0000ff;
+  color: white;
+}
+.page-link {
+  background-color: #0000ff;
+  color: white;
+}
+.page-link:hover {
+  background-color: #d2eaf7;
+  color: #233b64;
+}
+
+#description {
+  width: 2000px;
+}
+
+.trStyle {
+  background-color: transparent;
+}
+
+#categoryBtn:hover,
+#submitBtn:hover,
+.editDelete:hover {
+  background-color: #ffffff;
+  color: #293241;
+  border-color: #293241;
+}
+
+.topBtn:hover {
+  background-color: #3d5a80;
+  color: white;
+  border-color: #3d5a80;
+}
+
+#tableHead,
+.page-link {
+  background-color: #0000ff;
+  color: white;
+}
+
+.page-link:hover {
+  background-color: #d2eaf7;
+  color: #233b64;
 }

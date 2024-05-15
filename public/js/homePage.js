@@ -4,13 +4,16 @@ const reportsLink = document.getElementById("reportsLink");
 const leaderboardLink = document.getElementById("leaderboardLink");
 const logoutBtn = document.getElementById("logoutBtn");
 
+const form = document.getElementById("my-form");
+form.addEventListener("submit", addNewExpense);
+
 const token = localStorage.getItem("token");
 function addRowsToTable(expense) {
   var tbody = document.getElementById("expenseTableBody");
   var tableContent = "";
-
-  tableContent += `<tr>
-    <td>${expense.date}</td>
+  const stringifiedExpense = JSON.stringify(expense);
+  tableContent += `<tr class="trStyle">
+    <td >${expense.date}</td>
     <td>${expense.expenseAmount}</td>
     <td>${expense.expenseDescription}</td>
     <td>${expense.expenseCategory}</td>
@@ -18,36 +21,78 @@ function addRowsToTable(expense) {
     <button class="btn btn-danger" onclick="deleteRow(this, ${expense.id})">
     <i class="bi bi-trash"></i> 
   </button>
-  
-    </td>
+  <button class="btn btn-primary" onclick="updateRow(this)" data-expense='${stringifiedExpense}'>
+  <i class="bi bi-pencil-square"></i> Update
+</button>
+</td>
   </tr>`;
 
   tbody.innerHTML += tableContent;
 }
 
+function updateRow(btn) {
+  const stringifiedExpense = btn.getAttribute("data-expense");
+  const expense = JSON.parse(stringifiedExpense);
+  const { id, expenseAmount, expenseCategory, expenseDescription } = expense;
+
+  document.getElementById("expenseAmount").value = expenseAmount;
+  document.getElementById("expenseCategory").value = expenseCategory;
+  document.getElementById("expenseDescription").value = expenseDescription;
+
+  const form = document.getElementById("my-form");
+  form.removeEventListener("submit", addNewExpense);
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const updatedExpenseAmount = document.getElementById("expenseAmount").value;
+    const updatedExpenseDescription =
+      document.getElementById("expenseDescription").value;
+    const updatedExpenseCategory =
+      document.getElementById("expenseCategory").value;
+
+    const updatedFormData = {
+      expenseAmount: updatedExpenseAmount,
+      expenseDescription: updatedExpenseDescription,
+      expenseCategory: updatedExpenseCategory,
+    };
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/expense/editExpense/${id}`,
+        updatedFormData,
+        { headers: { Authorization: token } }
+      );
+
+      console.log("Expense updated successfully:", response.data);
+
+      document.getElementById("my-form").reset();
+      window.location.reload();
+
+      form.removeEventListener("submit", arguments.callee);
+      form.addEventListener("submit", addNewExpense);
+    } catch (error) {
+      console.error("Error updating expense:", error);
+    }
+  });
+}
+
 // Functions for delete and update
 async function deleteRow(btn, expenseId) {
-  try {
-    const response = await axios.delete(
-      `http://localhost:3000/expense/deleteExpense/${expenseId}`,
-      { headers: { Authorization: token } }
-    );
-    console.log("Expense deleted:", response.data);
-    // Handle success if needed
-  } catch (error) {
-    console.error("Error deleting expense:", error);
-    // Handle error if needed
-  }
+  // try {
+  //   const response = await axios.delete(
+  //     `http://localhost:3000/expense/deleteExpense/${expenseId}`,
+  //     { headers: { Authorization: token } }
+  //   );
+  //   console.log("Expense deleted:", response.data);
+  //   // Handle success if needed
+  // } catch (error) {
+  //   console.error("Error deleting expense:", error);
+  //   // Handle error if needed
+  // }
   console.log(expenseId);
   var row = btn.parentNode.parentNode;
   row.parentNode.removeChild(row);
-}
-
-function updateRow(btn) {
-  // Implement update logic here
-  // For example, you can access the row and modify its content
-  var row = btn.parentNode.parentNode;
-  // Perform update operations
 }
 
 async function addNewExpense(e) {
@@ -80,7 +125,7 @@ async function addNewExpense(e) {
   // create the date string in date-month-year format
   const dateStr = `${formattedDay}-${formattedMonth}-${year}`;
 
-  console.log(dateStr); // outputs something like "23-02-2023"
+  // console.log(dateStr); // outputs something like "23-02-2023"
 
   let expense = {
     date: dateStr,
@@ -124,7 +169,10 @@ window.addEventListener("DOMContentLoaded", () => {
   if (decodedToken.isPremiumUser) {
     buyPremiumBtn.innerHTML = "Premium Member &#128142";
     reportsLink.removeAttribute("onclick");
+    reportsLink.innerHTML = "Reports &#128142";
     leaderboardLink.removeAttribute("onclick");
+    leaderboardLink.innerHTML = "Leaderboard &#128142";
+
     leaderboardLink.setAttribute("href", "/premium/getLeaderboardPage");
     reportsLink.setAttribute("href", "/premium/getReportsPage");
     buyPremiumBtn.removeEventListener("click", buyPremium);
@@ -132,7 +180,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const limit = parseInt(document.getElementById("rowsPerPage").value);
   getAllExpenses(1, limit);
 });
-
+buyPremiumBtn.addEventListener("click", buyPremium);
 async function buyPremium(e) {
   const token = localStorage.getItem("token");
   const res = await axios.get(
@@ -154,14 +202,12 @@ async function buyPremium(e) {
       );
       console.log(res);
 
-      // alert(
-      //   "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
-      // );
-      document.getElementById("rzp-button1").style.display = "none";
-      document.getElementById("message").innerHTML =
-        "You are a premium user now";
+      alert(
+        "Welcome to our Premium Membership, You have now access to Reports and LeaderBoard"
+      );
+      window.location.reload();
+
       localStorage.setItem("token", res.data.token);
-      displayLeaderboard();
     },
   };
   const rzp1 = new Razorpay(options);
@@ -271,3 +317,12 @@ async function getAllExpenses(pageNo, limit) {
     console.error("Error fetching expenses:", error);
   }
 }
+async function logout() {
+  try {
+    localStorage.clear();
+    window.location.href = "/";
+  } catch (error) {
+    console.log(error);
+  }
+}
+logoutBtn.addEventListener("click", logout);

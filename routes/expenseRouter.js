@@ -15,4 +15,6 @@ router.get(
   "/getAllExpenses/:page",
   expenseController.getAllExpensesforPagination
 );
+router.put("/editExpense/:id", expenseController.editExpense);
+
 module.exports = router;
