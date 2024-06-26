@@ -1,3 +1,5 @@
+start command 
+npm start
 MERN project link  https://github.com/ayushpasi/fullstack-expense-tracker
 
 Backend implemented using Mongodb:  https://github.com/ayushpasi/Expense-Tracker-SQL-TO-NoSQL
